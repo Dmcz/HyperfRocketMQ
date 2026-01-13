@@ -9,10 +9,14 @@ use Apache\Rocketmq\V2\AckMessageRequest;
 use Apache\Rocketmq\V2\Endpoints;
 use Apache\Rocketmq\V2\FilterExpression;
 use Apache\Rocketmq\V2\HeartbeatRequest;
+use Apache\Rocketmq\V2\Message;
 use Apache\Rocketmq\V2\MessageQueue;
 use Apache\Rocketmq\V2\QueryRouteRequest;
 use Apache\Rocketmq\V2\ReceiveMessageRequest;
 use Apache\Rocketmq\V2\Resource;
+use Apache\Rocketmq\V2\SendMessageRequest;
+use Apache\Rocketmq\V2\SendMessageResponse;
+use Apache\Rocketmq\V2\SendResultEntry;
 use Dmcz\HyperfRocketmq\Stub\MessagingServiceClient;
 use Dmcz\HyperfRocketmq\Traits\ResponseStatusAssertTrait;
 use Google\Protobuf\Duration;
@@ -48,14 +52,36 @@ class Connection
         return new Telemetry($this->client->Telemetry($metadata));
     }
 
-    public function heartBeat(int $clientType, Resource $group, array $metadata): void
+    public function heartBeat(int $clientType, ?Resource $group, array $metadata): void
     {
         $request = new HeartbeatRequest();
         $request->setClientType($clientType);
-        $request->setGroup($group);
+
+        if ($group !== null) {
+            $request->setGroup($group);
+        }
 
         [$response] = $this->client->Heartbeat($request, $metadata);
         $this->assertResponseOk($response->getStatus(), 'HeartBeat');
+    }
+
+    /**
+     * @param Message[] $messages
+     * @return SendResultEntry[]
+     */
+    public function sendMessage(array $messages, array $metadata): array
+    {
+        $requset = new SendMessageRequest();
+        $requset->setMessages($messages);
+
+        $response = $this->client->SendMessage($requset, $metadata);
+
+        /** @var SendMessageResponse */
+        $reply = $this->extractReply($response, 'sendMessage');
+
+        $this->assertResponseOk($reply->getStatus(), 'sendMessage');
+
+        return iterator_to_array($reply->getEntries());
     }
 
     public function receiveMessage(int $batchSize, FilterExpression $filterExpression, Resource $group, Duration $invisibleDuration, Duration $longPollingTimeout, MessageQueue $messageQueue, array $metadata): ServerStreamingCall

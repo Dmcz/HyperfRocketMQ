@@ -13,13 +13,15 @@ class SimpleConsumer
     protected bool $started = false;
 
     public function __construct(
+        Target $target,
+        string $group,
         protected ?LoggerInterface $logger = null
     ) {
         $this->session = new ConsumerSession(
             new ConsumerSettings(
-                target: Target::parse('rmqproxy:8081'),
+                target: $target,
                 identity: new Identity(),
-                group: 'test_php',
+                group: $group,
             ),
             logger: $logger,
         );

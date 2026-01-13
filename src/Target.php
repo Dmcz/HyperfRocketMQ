@@ -126,7 +126,7 @@ final class Target implements Stringable
             $addresses[] = ['host' => $addr->getHost(), 'port' => $addr->getPort()];
         }
 
-        return new static($scheme, $addresses);
+        return new self($scheme, $addresses);
     }
 
     public static function parse(string $raw): static

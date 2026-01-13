@@ -7,6 +7,7 @@ namespace Dmcz\HyperfRocketmq;
 use Apache\Rocketmq\V2\ClientType;
 use Apache\Rocketmq\V2\FilterExpression;
 use Apache\Rocketmq\V2\FilterType;
+use Apache\Rocketmq\V2\Publishing;
 use Apache\Rocketmq\V2\Resource;
 use Apache\Rocketmq\V2\Subscription;
 use Apache\Rocketmq\V2\SubscriptionEntry;
@@ -24,8 +25,8 @@ class ConsumerSession extends Session
     private Resource $consumerGroup;
 
     public function __construct(
-        ConsumerSettings $settings,
-        ?LoggerInterface $logger = null,
+        private readonly ConsumerSettings $settings,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         parent::__construct($settings, logger: $logger);
 
@@ -134,5 +135,10 @@ class ConsumerSession extends Session
         $subscription->setSubscriptions($entries);
 
         return $subscription;
+    }
+
+    protected function getPublishing(): ?Publishing
+    {
+        return null;
     }
 }

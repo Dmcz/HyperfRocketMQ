@@ -30,7 +30,7 @@ final class ReceivedMessage
     {
         $systemProperties = $message->getSystemProperties();
 
-        return new static(
+        return new self(
             messageId: $systemProperties->getMessageId(),
             topic: $message->getTopic()->getName(),
             body: $message->getBody(),

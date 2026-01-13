@@ -8,8 +8,10 @@ use Apache\Rocketmq\V2\AckMessageEntry;
 use Apache\Rocketmq\V2\Address;
 use Apache\Rocketmq\V2\Endpoints;
 use Apache\Rocketmq\V2\FilterExpression;
+use Apache\Rocketmq\V2\Message;
 use Apache\Rocketmq\V2\MessageQueue;
 use Apache\Rocketmq\V2\Resource;
+use Apache\Rocketmq\V2\SendResultEntry;
 use Dmcz\HyperfRocketmq\Exception\InvalidArgumentException;
 use Dmcz\HyperfRocketmq\Stub\MessagingServiceClient;
 use Google\Protobuf\Duration;
@@ -39,9 +41,18 @@ class ConnectionManager
         return $this->get($endpoints)->telemetry($this->metadataFactory->create());
     }
 
-    public function heartBeat(Endpoints $endpoints, int $clientType, Resource $group): void
+    public function heartBeat(Endpoints $endpoints, int $clientType, ?Resource $group): void
     {
         $this->get($endpoints)->heartBeat($clientType, $group, $this->metadataFactory->create());
+    }
+
+    /**
+     * @param Message[] $messages
+     * @return SendResultEntry[]
+     */
+    public function sendMessage(Endpoints $endpoints, array $messages): array
+    {
+        return $this->get($endpoints)->sendMessage($messages, $this->metadataFactory->create());
     }
 
     public function receiveMessage(Endpoints $endpoints, int $batchSize, FilterExpression $filterExpression, Resource $group, Duration $invisibleDuration, Duration $longPollingTimeout, MessageQueue $messageQueue, int $deadline): ServerStreamingCall

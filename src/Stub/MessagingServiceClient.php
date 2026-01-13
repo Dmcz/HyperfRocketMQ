@@ -29,7 +29,6 @@ use Apache\Rocketmq\V2\RecallMessageRequest;
 use Apache\Rocketmq\V2\RecallMessageResponse;
 use Apache\Rocketmq\V2\ReceiveMessageRequest;
 use Apache\Rocketmq\V2\SendMessageRequest;
-use Apache\Rocketmq\V2\SendMessageResponse;
 use Apache\Rocketmq\V2\UpdateOffsetRequest;
 use Apache\Rocketmq\V2\UpdateOffsetResponse;
 use Grpc\ServerStreamingCall;
@@ -111,7 +110,7 @@ class MessagingServiceClient extends BaseClient
      * @param SendMessageRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options
-     * @return UnaryCall<SendMessageResponse>
+     * @return array
      */
     public function SendMessage(
         SendMessageRequest $argument,

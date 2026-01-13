@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Dmcz\HyperfRocketmq;
 
-class ConsumerSettings extends SessionSettings
+class ProducerSettings extends SessionSettings
 {
     public function __construct(
         Target $target,
         Identity $identity,
-        public readonly string $group,
-        public readonly ConsumerType $type = ConsumerType::SimpleConsumer,
-        public readonly int $receiveBatchSize = 32,
-        public readonly int $longPollingTimeout = 30,
         int $requestTimeout = 3,
+        public readonly bool $validateMessageType = true,
+        public readonly int $maxBodySizeBytes = 4 * 1024 * 1024
     ) {
         parent::__construct($target, $identity, $requestTimeout);
     }

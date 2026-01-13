@@ -27,11 +27,13 @@ class Telemetry
 
     public function recevie(): TelemetryCommand
     {
-        /* @var TelemetryCommand */
-        [$resp] = $this->call->recv();
+        $response = $this->call->recv();
 
-        $this->assertResponseOk($resp->getStatus(), 'ReceiveTelemetryCommand');
+        /** @var TelemetryCommand $reply */
+        $reply = $this->extractReply($response, 'ReceiveTelemetryCommand');
 
-        return $resp;
+        $this->assertResponseOk($reply->getStatus(), 'ReceiveTelemetryCommand');
+
+        return $reply;
     }
 }

@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Dmcz\HyperfRocketmq;
 
-use Swoole\Atomic;
-use Apache\Rocketmq\V2\UA;
-use Hyperf\Engine\Coroutine;
-use Psr\Log\LoggerInterface;
-use Google\Protobuf\Duration;
-use Apache\Rocketmq\V2\Language;
 use Apache\Rocketmq\V2\Endpoints;
+use Apache\Rocketmq\V2\Language;
+use Apache\Rocketmq\V2\Publishing;
 use Apache\Rocketmq\V2\Resource;
 use Apache\Rocketmq\V2\Settings;
 use Apache\Rocketmq\V2\Subscription;
-use Dmcz\HyperfRocketmq\SessionSettings;
+use Apache\Rocketmq\V2\UA;
 use Dmcz\HyperfRocketmq\Traits\LoggerTrait;
+use Google\Protobuf\Duration;
+use Hyperf\Engine\Coroutine;
+use Psr\Log\LoggerInterface;
+use Swoole\Atomic;
 
 abstract class Session
 {
@@ -32,14 +32,14 @@ abstract class Session
     protected Atomic $ready;
 
     public function __construct(
-        public readonly SessionSettings $settings,
-        protected ?LoggerInterface $logger = null
+        private readonly SessionSettings $settings,
+        private ?LoggerInterface $logger = null
     ) {
         $this->userAgent = new UA();
-        $this->userAgent->setHostname($this->settings->hostname ?? (gethostname() ?: ''));
+        $this->userAgent->setHostname(Env::getHost());
         $this->userAgent->setLanguage(Language::PHP);
-        $this->userAgent->setPlatform(trim(php_uname('s') . ' ' . php_uname('m')));
-        $this->userAgent->setVersion('dev');
+        $this->userAgent->setPlatform(Env::getPlatform());
+        $this->userAgent->setVersion(Env::$version);
 
         $this->connectionManager = new ConnectionManager(
             new MetadataFactory(
@@ -125,12 +125,16 @@ abstract class Session
         // $settings->setBackoffPolicy();
         $settings->setClientType($this->getClientType());
         // $settings->setMetric();
-        // $settings->setPublishing();
         $settings->setRequestTimeout((new Duration())->setSeconds($this->settings->requestTimeout));
 
         $subscription = $this->getSubscription();
         if (! empty($subscription)) {
             $settings->setSubscription($subscription);
+        }
+
+        $publishing = $this->getPublishing();
+        if (! empty($publishing)) {
+            $settings->setPublishing($publishing);
         }
 
         $settings->setUserAgent($this->userAgent);
@@ -143,4 +147,6 @@ abstract class Session
     abstract protected function getGroup(): ?Resource;
 
     abstract protected function getSubscription(): ?Subscription;
+
+    abstract protected function getPublishing(): ?Publishing;
 }
