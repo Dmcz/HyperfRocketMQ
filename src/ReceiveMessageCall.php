@@ -122,9 +122,31 @@ class ReceiveMessageCall
 
         $this->assertResponseOk($status, 'ReceiveTelemetryCommand');
 
+        $this->debug('recevied message: ');
+
         $results = [];
-        foreach ($messages as $msg) {
-            $results[] = ReceivedMessage::fromProtobuf($msg, $delivery);
+        foreach ($messages as $index => $msg) {
+            $receivedMessage = ReceivedMessage::fromProtobuf($msg, $delivery);
+            $results[] = $receivedMessage;
+
+            $this->debugFn(static function() use($index, $receivedMessage): string{
+                return implode(", \n", [
+                    '    message[' . $index . '] [',
+                    '        messageId: ' . $receivedMessage->messageId ,
+                    '        topic: ' . $receivedMessage->topic ,
+                    '        tag: ' . $receivedMessage->tag ,
+                    '        keys: ' . json_encode($receivedMessage->keys) ,
+                    '        messageGroup: ' . $receivedMessage->messageGroup ,
+                    '        deliveryTimestamp: ' . ($receivedMessage->deliveryTimestamp ? (date("Y-m-d H:i:s", $receivedMessage->deliveryTimestamp) . ' (' . (string)$receivedMessage->deliveryTimestamp . ')') : "null"),
+                    '        deliveryAttempt: ' . (string) $receivedMessage->deliveryAttempt,
+                    '        bornHost: ' . $receivedMessage->bornHost,
+                    '        bornTimestamp: ' . (date("Y-m-d H:i:s", $receivedMessage->bornTimestamp) . ' (' . (string)$receivedMessage->bornTimestamp . ')'),
+                    '        traceContext: ' . $receivedMessage->traceContext,
+                    '        receiptHandle: ' . $receivedMessage->receiptHandle,
+                    '        properties: ' . json_encode($receivedMessage->properties),
+                    '    ]'
+                ]);
+            });
         }
 
         return $results;
