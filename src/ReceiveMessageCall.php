@@ -177,5 +177,17 @@ class ReceiveMessageCall
             group: $this->group,
             topic: $this->topic,
         );
+
+        $this->debugFn(function() use($entries) : string{
+            $content =  '    message ack, topic: ' . $this->topic->getName() . ', group: ' . $this->group->getName() . ' [' . PHP_EOL;
+
+            foreach($entries as $entiy){
+                $content .= '        message id: ' . $entiy->getMessageId() . ', receiptHandle' . $entiy->getReceiptHandle() . PHP_EOL;
+            }
+
+            $content .= '    ]' . PHP_EOL;
+                    
+            return $content;
+        });
     }
 }
