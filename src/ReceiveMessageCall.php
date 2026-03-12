@@ -129,21 +129,41 @@ class ReceiveMessageCall
             $receivedMessage = ReceivedMessage::fromProtobuf($msg, $delivery);
             $results[] = $receivedMessage;
 
-            $this->debugFn(static function() use($index, $receivedMessage): string{
+            $this->debugFn(static function() use($index, $msg, $delivery): string{
+                $systemProperties = $msg->getSystemProperties();
+                $msgDeliveryTimestamp = $systemProperties->getDeliveryTimestamp();
+                $bornTimestamp = $systemProperties->getBornTimestamp();
+                $storeTimestamp = $systemProperties->getStoreTimestamp();
+                $bodyDigest = $systemProperties->getBodyDigest();
+                $deadLetterQueue = $systemProperties->getDeadLetterQueue();
+                $invisibleDuration = $systemProperties->getInvisibleDuration();
+                $orphanedTransactionRecoveryDuration = $systemProperties->getOrphanedTransactionRecoveryDuration();
+
+
                 return implode(", \n", [
-                    '    message[' . $index . '] [',
-                    '        messageId: ' . $receivedMessage->messageId ,
-                    '        topic: ' . $receivedMessage->topic ,
-                    '        tag: ' . $receivedMessage->tag ,
-                    '        keys: ' . json_encode($receivedMessage->keys) ,
-                    '        messageGroup: ' . $receivedMessage->messageGroup ,
-                    '        deliveryTimestamp: ' . ($receivedMessage->deliveryTimestamp ? (date("Y-m-d H:i:s", $receivedMessage->deliveryTimestamp) . ' (' . (string)$receivedMessage->deliveryTimestamp . ')') : "null"),
-                    '        deliveryAttempt: ' . (string) $receivedMessage->deliveryAttempt,
-                    '        bornHost: ' . $receivedMessage->bornHost,
-                    '        bornTimestamp: ' . (date("Y-m-d H:i:s", $receivedMessage->bornTimestamp) . ' (' . (string)$receivedMessage->bornTimestamp . ')'),
-                    '        traceContext: ' . $receivedMessage->traceContext,
-                    '        receiptHandle: ' . $receivedMessage->receiptHandle,
-                    '        properties: ' . json_encode($receivedMessage->properties),
+                    '    message[ index = ' . $index . '] [ delivery: ' . ($delivery ? (date("Y-m-d H:i:s", $delivery->getSeconds()) . ' (' . (string) $delivery->getSeconds() . ')') : "null") . '] [',
+                    '        messageId: ' . $systemProperties->getMessageId(),
+                    '        topic: ' . $msg->getTopic()->getName(),
+                    '        tag: ' . $systemProperties->getTag(),
+                    '        keys: ' . json_encode($systemProperties->getKeys()),
+                    '        messageGroup: ' . $systemProperties->getMessageGroup(),
+                    '        bodyDigest: ' . '[' . $bodyDigest->getType() . ']' . $bodyDigest->getChecksum(),
+                    '        bodyEncoding: ' . (string) $systemProperties->getBodyEncoding(),
+                    '        deadLetterQueue: ' . ($deadLetterQueue ? ('messageId = ' . $deadLetterQueue->getMessageId() . ', topic=' . $deadLetterQueue->getTopic()) : 'null'),
+                    '        deliveryTimestamp: ' . ($msgDeliveryTimestamp ? (date("Y-m-d H:i:s", $msgDeliveryTimestamp->getSeconds()) . ' (' . (string) $msgDeliveryTimestamp->getSeconds() . ')') : "null"),
+                    '        deliveryAttempt: ' . (string) $systemProperties->getDeliveryAttempt(),
+                    '        storeHost: ' . $systemProperties->getStoreHost(),
+                    '        storeTimestamp: ' . ($storeTimestamp ? (date("Y-m-d H:i:s", $storeTimestamp->getSeconds()) . ' (' . (string) $storeTimestamp->getSeconds() . ')') : "null"),
+                    '        invisibleDuration: ' . ($invisibleDuration ? (string) $invisibleDuration->getSeconds() : 'null'),
+                    '        messageType: ' . (string) $systemProperties->getMessageType(),
+                    '        orphanedTransactionRecoveryDuration: ' . ($orphanedTransactionRecoveryDuration ? (string) $orphanedTransactionRecoveryDuration->getSeconds() : 'null'),
+                    '        queueId: ' . (string) $systemProperties->getQueueId(),
+                    '        queueOffset: ' . (string) $systemProperties->getQueueOffset(),
+                    '        bornHost: ' . $systemProperties->getBornHost(),
+                    '        bornTimestamp: ' . ($bornTimestamp ? (date("Y-m-d H:i:s", $bornTimestamp->getSeconds()) . ' (' . (string) $bornTimestamp->getSeconds() . ')') : "null"),
+                    '        traceContext: ' . $systemProperties->getTraceContext(),
+                    '        receiptHandle: ' . $systemProperties->getReceiptHandle(),
+                    '        properties: ' . json_encode($msg->getUserProperties()),
                     '    ]'
                 ]);
             });

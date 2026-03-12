@@ -26,6 +26,9 @@ final class ReceivedMessage
     ) {
     }
 
+    // TODO 这里消息要重新设计
+    // 1. 根据消息类型提供不同的字段
+    // 2. 考虑一下没收到的deliveryTimestamp 和 投递的deliveryTimestamp
     public static function fromProtobuf(Message $message, ?Timestamp $deliveryTimestamp): static
     {
         $systemProperties = $message->getSystemProperties();
