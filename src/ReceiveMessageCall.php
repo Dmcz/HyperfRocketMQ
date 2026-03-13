@@ -145,7 +145,7 @@ class ReceiveMessageCall
                     '        messageId: ' . $systemProperties->getMessageId(),
                     '        topic: ' . $msg->getTopic()->getName(),
                     '        tag: ' . $systemProperties->getTag(),
-                    '        keys: ' . json_encode($systemProperties->getKeys()),
+                    '        keys: ' . json_encode(iterator_to_array($systemProperties->getKeys(), true)),
                     '        messageGroup: ' . $systemProperties->getMessageGroup(),
                     '        bodyDigest: ' . '[' . $bodyDigest->getType() . ']' . $bodyDigest->getChecksum(),
                     '        bodyEncoding: ' . (string) $systemProperties->getBodyEncoding(),
@@ -163,7 +163,7 @@ class ReceiveMessageCall
                     '        bornTimestamp: ' . ($bornTimestamp ? (date("Y-m-d H:i:s", $bornTimestamp->getSeconds()) . ' (' . (string) $bornTimestamp->getSeconds() . ')') : "null"),
                     '        traceContext: ' . $systemProperties->getTraceContext(),
                     '        receiptHandle: ' . $systemProperties->getReceiptHandle(),
-                    '        properties: ' . json_encode($msg->getUserProperties()),
+                    '        properties: ' . json_encode(iterator_to_array($msg->getUserProperties())),
                     '    ]'
                 ]);
             });
