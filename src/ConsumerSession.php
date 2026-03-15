@@ -76,9 +76,9 @@ class ConsumerSession extends Session
             $queue->getBroker()->getEndpoints(),
             $batchSize,
             $topic->filterExpression(),
-            $this->getGroup(),
+            $group,
             (new Duration())->setSeconds($invisibleDuration),
-            new Duration()->setSeconds($longPollingTimeout),
+            (new Duration())->setSeconds($longPollingTimeout),
             $queue,
             $this->settings->requestTimeout + $longPollingTimeout,
         );

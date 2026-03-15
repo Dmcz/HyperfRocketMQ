@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fe858e7044ae81a1a06ca2fd3151c78",
+    "content-hash": "e07e1c88ad5a1f765dfff5554097a44c",
     "packages": [
         {
             "name": "brick/math",
@@ -992,12 +992,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dmcz/hyperf-grpc.git",
-                "reference": "a4cd028920421d31a0834d1829b799d7f09de159"
+                "reference": "552204e8dc5019f8b84e56ab89a44143b1a274f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dmcz/hyperf-grpc/zipball/a4cd028920421d31a0834d1829b799d7f09de159",
-                "reference": "a4cd028920421d31a0834d1829b799d7f09de159",
+                "url": "https://api.github.com/repos/Dmcz/hyperf-grpc/zipball/552204e8dc5019f8b84e56ab89a44143b1a274f2",
+                "reference": "552204e8dc5019f8b84e56ab89a44143b1a274f2",
                 "shasum": ""
             },
             "require": {
@@ -1038,20 +1038,20 @@
                 "docs": "https://hyperf.wiki",
                 "pull-request": "https://github.com/hyperf/hyperf/pulls"
             },
-            "time": "2026-01-13T06:37:39+00:00"
+            "time": "2026-03-15T05:04:07+00:00"
         },
         {
             "name": "hyperf/grpc-client",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hyperf/grpc-client.git",
-                "reference": "063d5b125b7eeb44bba86f86709d09937c7556b9"
+                "url": "https://github.com/Dmcz/hyperf-grpc-client.git",
+                "reference": "53a7f5fa71bee46f7b05e32b043bc9aed15f074f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/grpc-client/zipball/063d5b125b7eeb44bba86f86709d09937c7556b9",
-                "reference": "063d5b125b7eeb44bba86f86709d09937c7556b9",
+                "url": "https://api.github.com/repos/Dmcz/hyperf-grpc-client/zipball/53a7f5fa71bee46f7b05e32b043bc9aed15f074f",
+                "reference": "53a7f5fa71bee46f7b05e32b043bc9aed15f074f",
                 "shasum": ""
             },
             "require": {
@@ -1071,11 +1071,11 @@
             "default-branch": true,
             "type": "library",
             "extra": {
-                "hyperf": {
-                    "config": "Hyperf\\GrpcClient\\ConfigProvider"
-                },
                 "branch-alias": {
                     "dev-master": "3.1-dev"
+                },
+                "hyperf": {
+                    "config": "Hyperf\\GrpcClient\\ConfigProvider"
                 }
             },
             "autoload": {
@@ -1083,36 +1083,34 @@
                     "Hyperf\\GrpcClient\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "GPBMetadata\\": "tests/GPBMetadata",
+                    "Grpc\\": "tests/Grpc",
+                    "HyperfTest\\GrpcClient\\": "tests/",
+                    "Routeguide\\": "tests/Routeguide",
+                    "UserService\\": "tests/UserService"
+                }
+            },
             "license": [
                 "MIT"
             ],
             "description": "A GRPC Client for Hyperf.",
             "homepage": "https://hyperf.io",
             "keywords": [
-                "gRPC",
+                "grpc",
                 "grpc-client",
                 "hyperf",
                 "php",
                 "swoole"
             ],
             "support": {
-                "docs": "https://hyperf.wiki",
                 "issues": "https://github.com/hyperf/hyperf/issues",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls",
-                "source": "https://github.com/hyperf/hyperf"
+                "source": "https://github.com/hyperf/hyperf",
+                "docs": "https://hyperf.wiki",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls"
             },
-            "funding": [
-                {
-                    "url": "https://hyperf.wiki/#/zh-cn/donate",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://opencollective.com/hyperf",
-                    "type": "open_collective"
-                }
-            ],
-            "time": "2025-12-17T05:59:35+00:00"
+            "time": "2026-03-15T05:25:05+00:00"
         },
         {
             "name": "hyperf/macroable",

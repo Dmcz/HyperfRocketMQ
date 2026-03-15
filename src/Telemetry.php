@@ -25,15 +25,28 @@ class Telemetry
         $this->call->push($cmd);
     }
 
-    public function recevie(): TelemetryCommand
+    /**
+     * @return TelemetryCommand[]|null
+     */
+    public function recevie(): ?array
     {
-        $response = $this->call->recv();
+        /**
+         * @var TelemetryCommand[] $recv
+         * @var int $status
+         * @var Response $resp
+         */
+        [$recv, $status, $resp] = $this->call->recv();
 
-        /** @var TelemetryCommand $reply */
-        $reply = $this->extractReply($response, 'ReceiveTelemetryCommand');
+        if($recv === null){
+            // TODO Detect gRPC status and consider whether an exception should be thrown,
+            // or change gRPC library.
+            return null;
+        }
 
-        $this->assertResponseOk($reply->getStatus(), 'ReceiveTelemetryCommand');
+        foreach($recv as $message){
+            $this->assertResponseOk($message->getStatus(), 'ReceiveTelemetryCommand');
+        }
 
-        return $reply;
+        return $recv;
     }
 }

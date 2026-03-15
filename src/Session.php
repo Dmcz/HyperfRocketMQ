@@ -73,14 +73,18 @@ abstract class Session
         Coroutine::create(function () {
             // TODO 关闭
             while (true) {
-                $command = $this->telemetry->recevie();
+                $commands = $this->telemetry->recevie();
 
-                $this->debug('received telemetry command "' . $command->getCommand() . '"');
+                foreach($commands as $command){
+                    $this->debug('received telemetry command "' . $command->getCommand() . '"');
 
-                match ($command->getCommand()) {
-                    'settings' => $this->onSettingsCommand($command->getSettings()),
-                };
-                // var_dump($resp->getSettings()->getUserAgent()->getHostname());
+                    match ($command->getCommand()) {
+                        'settings' => $this->onSettingsCommand($command->getSettings()),
+                    };
+
+                }
+
+               
             }
         });
     }

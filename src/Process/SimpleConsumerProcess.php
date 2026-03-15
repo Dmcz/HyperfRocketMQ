@@ -51,7 +51,7 @@ abstract class SimpleConsumerProcess extends AbstractProcess
                 $this->onError($th);
             }
 
-            sleep(1);
+            //sleep(1);
         }
     }
 

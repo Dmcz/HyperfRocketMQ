@@ -34,7 +34,7 @@ class ReceiveMessageCall
     }
 
     /**
-     * @return ReceivedMessage[]
+     * @return ReceivedMessage[]|null
      */
     public function recevie(): ?array
     {
@@ -53,7 +53,8 @@ class ReceiveMessageCall
             }
 
             /* @var ReceiveMessageResponse */
-            $responses[] = $received[0];
+            //$responses[] = $received[0];
+            $responses = array_merge($responses, $received[0]);
         }
 
         /** @var null|Status */
@@ -174,40 +175,32 @@ class ReceiveMessageCall
 
     /**
      * @param ReceivedMessage|ReceivedMessage[] $message
+     * 
+     * DESIGN NOTE: 
+     * This function only accepts a single message by default to prevent accidental misuse. 
+     * If batch ACK is required, a dedicated batch-ack method should be provided instead of allowing multiple messages in this API.
      */
-    public function ack(array|ReceivedMessage $message): void
+    public function ack(ReceivedMessage $message): void
     {
-        $entries = [];
-
-        if (! is_array($message)) {
-            $message = [$message];
-        }
-
-        foreach ($message as $msg) {
-            $entry = new AckMessageEntry();
-            $entry->setMessageId($msg->messageId);
-            $entry->setReceiptHandle($msg->receiptHandle);
-
-            $entries[] = $entry;
-        }
-
+        $entry = new AckMessageEntry();
+        $entry->setMessageId($message->messageId);
+        $entry->setReceiptHandle($message->receiptHandle);
+    
         $this->connectionManager->ackMessage(
             $this->messageQueue->getBroker()->getEndpoints(),
-            $entries,
+            [$entry],
             group: $this->group,
             topic: $this->topic,
         );
 
-        $this->debugFn(function() use($entries) : string{
-            $content =  '    message ack, topic: ' . $this->topic->getName() . ', group: ' . $this->group->getName() . ' [' . PHP_EOL;
-
-            foreach($entries as $entiy){
-                $content .= '        message id: ' . $entiy->getMessageId() . ', receiptHandle' . $entiy->getReceiptHandle() . PHP_EOL;
-            }
-
+        $this->debugFn(function() use($entry) : string{
+            $content = '    message ack' . PHP_EOL;
+            $content .= '        topic: ' . $this->topic->getName() . ', group: ' . $this->group->getName() . ' [' . PHP_EOL;
+            $content .= '        message id: ' . $entry->getMessageId() . ', receiptHandle' . $entry->getReceiptHandle() . PHP_EOL;
             $content .= '    ]' . PHP_EOL;
                     
             return $content;
         });
+
     }
 }

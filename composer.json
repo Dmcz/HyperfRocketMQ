@@ -39,6 +39,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/Dmcz/hyperf-grpc.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Dmcz/hyperf-grpc-client.git"
         }
     ]
 }

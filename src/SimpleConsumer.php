@@ -43,6 +43,6 @@ class SimpleConsumer
 
     public function receive(Topic $topic): ReceiveMessageCall
     {
-        return $this->session->receiveMessage($topic, 16, 20, 5);
+        return $this->session->receiveMessage($topic, 32, 60, 30);
     }
 }
